@@ -60,11 +60,11 @@ class DateUtils {
     return getLastDayOfMonth(getFirstDayOfNextMonth());
   }
 
-  static DateTime addMonths(DateTime fromMonth, int months) {
-    DateTime firstDayOfCurrentMonth = fromMonth;
+  static DateTime? addMonths(DateTime? fromMonth, int months) {
+    DateTime? firstDayOfCurrentMonth = fromMonth;
     for (int i = 0; i < months; i++) {
       firstDayOfCurrentMonth =
-          getLastDayOfMonth(firstDayOfCurrentMonth)
+          getLastDayOfMonth(firstDayOfCurrentMonth!)
               .add(Duration(days: 1));
     }
     
@@ -99,7 +99,7 @@ class DateUtils {
     
     int monthsNumber = calculateMonthsDifference(startDate, endDate);
     
-    List<int> weeksNumbersMonthly = List();
+    List<int> weeksNumbersMonthly = [];
 
 
     if (monthsNumber == 0) {

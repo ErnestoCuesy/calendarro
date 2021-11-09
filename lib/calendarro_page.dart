@@ -1,53 +1,49 @@
 import 'package:calendarro/calendarro.dart';
 import 'package:calendarro/date_utils.dart' as dateUtil;
-import 'package:calendarro/default_weekday_labels_row.dart';
 import 'package:flutter/material.dart';
 
 class CalendarroPage extends StatelessWidget {
-  static final MAX_ROWS_COUNT = 6;
+  static const MAX_ROWS_COUNT = 6;
 
-  DateTime pageStartDate;
-  DateTime pageEndDate;
-  Widget weekdayLabelsRow;
-
-  int startDayOffset;
+  final DateTime? pageStartDate;
+  final DateTime? pageEndDate;
+  final Widget? weekdayLabelsRow;
 
   CalendarroPage(
-      {this.pageStartDate, this.pageEndDate, this.weekdayLabelsRow}) {
-    startDayOffset = pageStartDate.weekday - DateTime.monday;
-  }
+      {this.pageStartDate, this.pageEndDate, this.weekdayLabelsRow});
 
   @override
   Widget build(BuildContext context) {
+    final int startDayOffset = pageStartDate!.weekday - DateTime.monday;
     return Container(
         child: Column(
-            children: buildRows(context), mainAxisSize: MainAxisSize.min));
+            children: buildRows(context, startDayOffset) as List<Widget>, mainAxisSize: MainAxisSize.min));
   }
 
-  List<Widget> buildRows(BuildContext context) {
-    List<Widget> rows = [];
+  List<Widget?> buildRows(BuildContext context, int startDayOffset) {
+    List<Widget?> rows = [];
     rows.add(weekdayLabelsRow);
 
     DateTime rowLastDayDate =
-        dateUtil.DateUtils.addDaysToDate(pageStartDate, 6 - startDayOffset);
+        dateUtil.DateUtils.addDaysToDate(pageStartDate!, 6 - startDayOffset);
 
-    if (pageEndDate.isAfter(rowLastDayDate)) {
+    if (pageEndDate!.isAfter(rowLastDayDate)) {
       rows.add(Row(
           children: buildCalendarRow(context, pageStartDate, rowLastDayDate)));
 
       for (var i = 1; i < MAX_ROWS_COUNT; i++) {
         DateTime nextRowFirstDayDate = dateUtil.DateUtils.addDaysToDate(
-            pageStartDate, 7 * i - startDayOffset);
+            pageStartDate!, 7 * i - startDayOffset);
 
-        if (nextRowFirstDayDate.isAfter(pageEndDate)) {
+        if (nextRowFirstDayDate.isAfter(pageEndDate!)) {
           break;
         }
 
         DateTime nextRowLastDayDate = dateUtil.DateUtils.addDaysToDate(
-            pageStartDate, 7 * i - startDayOffset + 6);
+            pageStartDate!, 7 * i - startDayOffset + 6);
 
-        if (nextRowLastDayDate.isAfter(pageEndDate)) {
-          nextRowLastDayDate = pageEndDate;
+        if (nextRowLastDayDate.isAfter(pageEndDate!)) {
+          nextRowLastDayDate = pageEndDate!;
         }
 
         rows.add(Row(
@@ -63,17 +59,17 @@ class CalendarroPage extends StatelessWidget {
   }
 
   List<Widget> buildCalendarRow(
-      BuildContext context, DateTime rowStartDate, DateTime rowEndDate) {
+      BuildContext context, DateTime? rowStartDate, DateTime? rowEndDate) {
     List<Widget> items = [];
 
-    DateTime currentDate = rowStartDate;
+    DateTime? currentDate = rowStartDate;
     for (int i = 0; i < 7; i++) {
-      if (i + 1 >= rowStartDate.weekday && i + 1 <= rowEndDate.weekday) {
-        CalendarroState calendarroState = Calendarro.of(context);
-        Widget dayTile = calendarroState.widget.dayTileBuilder
+      if (i + 1 >= rowStartDate!.weekday && i + 1 <= rowEndDate!.weekday) {
+        CalendarroState calendarroState = Calendarro.of(context)!;
+        Widget dayTile = calendarroState.widget.dayTileBuilder!
             .build(context, currentDate, calendarroState.widget.onTap);
         items.add(dayTile);
-        currentDate = currentDate.add(Duration(days: 1));
+        currentDate = currentDate!.add(Duration(days: 1));
       } else {
         items.add(Expanded(
           child: Text(""),
